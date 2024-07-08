@@ -40,7 +40,7 @@ fn add_metadata_to_pdf(input_path: &str, output_path: &Path, project_folder: &Pa
     // info.set("Data", Object::Stream(stream));
 
     let object_id = doc.add_object(Object::Stream(stream));
-    info.set("DataFolder", object_id.clone());
+    info.set("DataFolder", object_id);
 
     doc.trailer.set("Pixi", Object::Dictionary(info));
 
@@ -59,7 +59,7 @@ fn read_metadata_from_pdf(input_path: &Path, output_folder: &Path) -> Vec<(Strin
         .and_then(|obj| obj.as_dict().ok());
     // println!("trailer: {:?}", trailer);
     for (_key, value) in pixi_info.unwrap() {
-        if let Some(_value) = value.as_str().ok() {
+        if let Ok(_value) = value.as_str() {
             // println!(
             //     "{} -> {}",
             //     String::from_utf8_lossy(key),
@@ -139,7 +139,7 @@ fn compress_folder_to_zstd_archive<P: AsRef<Path>>(
         let entry = entry?;
         let path = entry.path();
 
-        let rel_path = path.strip_prefix(&folder_path).unwrap();
+        let rel_path = path.strip_prefix(folder_path).unwrap();
         if rel_path.starts_with(".pixi") {
             continue;
         }
@@ -174,7 +174,6 @@ enum SubCommand {
     /// Run a pixi command from a PDF (inside a temporary folder)
     #[clap(name = "run")]
     Run(Run),
-
 }
 
 #[derive(Parser, Debug)]
@@ -212,15 +211,24 @@ fn main() {
 
     match opts.subcmd {
         SubCommand::Embed(add) => {
-            println!("Embedding contents from: {:?} + {:?} to {:?}", add.file, add.project, add.out_file);
+            println!(
+                "Embedding contents from: {:?} + {:?} to {:?}",
+                add.file, add.project, add.out_file
+            );
             add_metadata_to_pdf(add.file.to_str().unwrap(), &add.out_file, &add.project);
         }
         SubCommand::Extract(read) => {
-            println!("Extracting contents from: {:?} to {:?}", read.file, read.out_folder);
+            println!(
+                "Extracting contents from: {:?} to {:?}",
+                read.file, read.out_folder
+            );
             let _ = read_metadata_from_pdf(&read.file, &read.out_folder);
         }
         SubCommand::Run(run_opts) => {
-            println!("Running pixi project from: {:?} with arguments {:?}", run_opts.file, run_opts.args);
+            println!(
+                "Running pixi project from: {:?} with arguments {:?}",
+                run_opts.file, run_opts.args
+            );
             run(&run_opts.file, run_opts.args).unwrap();
         }
     }
