@@ -16,14 +16,13 @@ To get started with Pixi PDF, follow these steps:
 
 1. Install [`pixi`](https://pixi.sh)
 2. As this is not released, install the project using a pixi task. `pixi run install`
-3. Try out the test in `test/`. `pixi-pdf embed -f test.pdf -o test-out.pdf`
+3. Try out the example in `example/`. `pixi-pdf embed -p example -f test.pdf -o test-out.pdf`
 4. Check if the `test-out.pdf` is still intact with your favorite pdf viewer.
 5. Run the task in the project embedded in the pdf. `pixi-pdf run test-out.pdf -- start` (`start` is the task in the embedded project).
 6. Now go and try it on your own projects and have fun!
 
 ## Disclaimer
 
-- It only embeds a `pixi.toml` and `pixi.lock` into the pdf. So any project that you want to embed either needs to be a `conda` or `pypi` project which is released on some channel or registry.
 - It uses your system installation of `pixi`, it might be helpfull to get the latest version if you already have one, `pixi self-update`.
 
 

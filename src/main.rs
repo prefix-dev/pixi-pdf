@@ -21,9 +21,18 @@ fn add_metadata_to_pdf(input_path: &str, output_path: &Path, project_folder: &Pa
     // Create a new dictionary for the metadata
     let mut info = dictionary! {};
 
+    // Get manifest file from project folder
+    let manifest_content = if project_folder.join("pixi.toml").exists() {
+        std::fs::read_to_string(project_folder.join("pixi.toml")).expect("Could not read manifest file")
+    } else if project_folder.join("pyproject.toml").exists() {
+        std::fs::read_to_string(project_folder.join("pyproject.toml")).expect("Could not read manifest file")
+    } else {
+        panic!("Could not find manifest file in the project folder. Please make sure to have either a `pixi.toml` or `pyproject.toml` file in the project folder.")
+    };
+
     info.set(
         "PixiToml",
-        Object::string_literal(std::fs::read_to_string(project_folder.join("pixi.toml")).unwrap()),
+        Object::string_literal(manifest_content),
     );
     info.set(
         "PixiLock",
