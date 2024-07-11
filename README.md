@@ -32,4 +32,4 @@ This project is a prototype, not being closely maintained. Please feel free to m
 
 ## License
 
-Pixi PDF is released under the [MIT License](https://opensource.org/licenses/MIT). Feel free to use, modify, and distribute this tool for both personal and commercial purposes.
+Pixi PDF is released under the [BSD-3 License](./LICENSE). Feel free to use, modify, and distribute this tool for both personal and commercial purposes.
