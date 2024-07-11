@@ -1,7 +1,12 @@
 [package]
 name = "pixi-pdf"
+description = "A tool to create executable PDF files by embedding pixi projects in them"
 version = "0.1.0"
 edition = "2021"
+license = "BSD-3-Clause"
+authors = ["Wolf Vollprecht <w.vollprecht@gmail.com>"]
+readme = "README.md"
+homepage = "https://pixi.sh"
 
 [dependencies]
 clap = { version = "4.4.9", features = ["derive"] }
