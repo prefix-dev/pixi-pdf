@@ -21,9 +21,18 @@ fn add_metadata_to_pdf(input_path: &str, output_path: &Path, project_folder: &Pa
     // Create a new dictionary for the metadata
     let mut info = dictionary! {};
 
+    // Get manifest file from project folder
+    let manifest_content = if project_folder.join("pixi.toml").exists() {
+        std::fs::read_to_string(project_folder.join("pixi.toml")).expect("Could not read manifest file")
+    } else if project_folder.join("pyproject.toml").exists() {
+        std::fs::read_to_string(project_folder.join("pyproject.toml")).expect("Could not read manifest file")
+    } else {
+        panic!("Could not find manifest file in the project folder. Please make sure to have either a `pixi.toml` or `pyproject.toml` file in the project folder.")
+    };
+
     info.set(
         "PixiToml",
-        Object::string_literal(std::fs::read_to_string(project_folder.join("pixi.toml")).unwrap()),
+        Object::string_literal(manifest_content),
     );
     info.set(
         "PixiLock",
@@ -178,32 +187,39 @@ enum SubCommand {
 
 #[derive(Parser, Debug)]
 struct Run {
+    /// File path to the PDF to run the project from
     #[clap(required = true)]
     file: PathBuf,
 
+    /// Arguments to pass to the `pixi run` command
     #[clap(last = true)]
     args: Vec<String>,
 }
 
 #[derive(Parser, Debug)]
 struct Embed {
-    #[clap(short, long)]
+    /// File path to the PDF to embed the project into
+    #[clap(short, long, required = true)]
     file: PathBuf,
 
-    #[clap(short, long)]
+    /// Path to the project folder to embed
+    #[clap(short, long, default_value = ".")]
     project: PathBuf,
 
+    /// Output file path for the new PDF
     #[clap(short, long)]
     out_file: PathBuf,
 }
 
 #[derive(Parser, Debug)]
 struct Extract {
+    /// File path to the PDF to extract the project from
     #[clap(short, long)]
     file: PathBuf,
 
-    #[clap(short, long)]
-    out_folder: PathBuf,
+    /// Output folder path for the extracted project
+    #[clap(short, long, )]
+    out_folder: Option<PathBuf>,
 }
 
 fn main() {
@@ -212,8 +228,8 @@ fn main() {
     match opts.subcmd {
         SubCommand::Embed(add) => {
             println!(
-                "Embedding contents from: {:?} + {:?} to {:?}",
-                add.file, add.project, add.out_file
+                "Embedding contents from: project: {:?} + pdf: {:?} to {:?}",
+                add.project, add.file, add.out_file
             );
             add_metadata_to_pdf(add.file.to_str().unwrap(), &add.out_file, &add.project);
         }
@@ -222,7 +238,15 @@ fn main() {
                 "Extracting contents from: {:?} to {:?}",
                 read.file, read.out_folder
             );
-            let _ = read_metadata_from_pdf(&read.file, &read.out_folder);
+
+            // let the output folder be the same as the name of the input file without the file type, if not specified
+            let output_folder = read.out_folder.unwrap_or_else(|| {
+                let mut out_folder = read.file.clone();
+                out_folder.set_extension("");
+                out_folder
+            });
+
+            let _ = read_metadata_from_pdf(&read.file, &output_folder);
         }
         SubCommand::Run(run_opts) => {
             println!(

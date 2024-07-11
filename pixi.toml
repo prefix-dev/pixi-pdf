@@ -1,0 +1,12 @@
+[project]
+name = "pixi-pdf"
+authors = ["Wolf Vollprect <wolf@prefix.dev>"]
+channels = ["conda-forge"]
+platforms = ["win-64", "linux-64", "osx-arm64", "osx-64"]
+
+[tasks]
+build = "cargo build"
+install = "cargo install --locked --path ."
+
+[dependencies]
+rust = ">=1.79.0,<1.80"

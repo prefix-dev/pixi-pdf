@@ -1,1 +1,6 @@
 /target
+# pixi environments
+.pixi
+*.egg-info
+
+test-out.pdf
