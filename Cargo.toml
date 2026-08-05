@@ -9,9 +9,9 @@ readme = "README.md"
 homepage = "https://pixi.sh"
 
 [dependencies]
-clap = { version = "4.4.9", features = ["derive"] }
-lopdf = "0.31.0"
-tar = "0.4.40"
-tempfile = "3.8.1"
-walkdir = "2.4.0"
-zstd = "0.13.0"
+clap = { version = "4.6.5", features = ["derive"] }
+lopdf = "0.44.0"
+tar = "0.4.46"
+tempfile = "3.27.0"
+walkdir = "2.5.0"
+zstd = "0.13.3"
